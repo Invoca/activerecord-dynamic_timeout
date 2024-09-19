@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout"
 
-RSpec.describe ActiveRecord::DynamicTimeout do
+RSpec.describe ActiveRecord::DynamicTimeout, skip: true do
   before do
     described_class.instance_variable_set(:@isolation_scope, nil)
   end

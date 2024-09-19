@@ -4,6 +4,7 @@ require "active_record"
 require "active_support"
 require_relative "../dynamic_timeout"
 require_relative "extensions/adapter_extension"
+require_relative "extensions/base_extension"
 require_relative "extensions/mysql2_adapter_extension"
 require_relative "extensions/trilogy_adapter_extension"
 require_relative "extensions/sqlite_adapter_extension"
@@ -13,6 +14,7 @@ module ActiveRecord::DynamicTimeout
   module Initializer
     class << self
       def initialize!
+        ActiveRecord::Base.include(ActiveRecord::DynamicTimeout::BaseExtension)
         ActiveRecord::Base.connection.class.include(ActiveRecord::DynamicTimeout::AbstractAdapterExtension)
 
         if ActiveRecord.gem_version < "7.1"
