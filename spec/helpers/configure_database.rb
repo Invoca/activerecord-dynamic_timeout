@@ -12,10 +12,10 @@ module ConfigureDatabase
     spec   = YAML.safe_load(source, aliases: true) || {}
 
     ActiveRecord::Base.configurations = spec.stringify_keys
-    ActiveRecord::Base.establish_connection(:test)
     ActiveRecord::Tasks::DatabaseTasks.root = File.expand_path("../fixtures", __dir__)
     ActiveRecord::Tasks::DatabaseTasks.create(
       ActiveRecord::Base.configurations.configurations.first
     )
+    ActiveRecord::Base.establish_connection(:test)
   end
 end

@@ -2,7 +2,8 @@
 
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require_relative "helpers/adapter_helpers"
+require "debug"
+
 require_relative "helpers/configure_database"
 
 RSpec.configure do |config|

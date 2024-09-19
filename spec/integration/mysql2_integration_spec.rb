@@ -14,15 +14,27 @@ RSpec.describe "Mysql2 Integration Tests" do
         ActiveRecord::DynamicTimeout.with(timeout: 1) do
           ActiveRecord::Base.connection.execute("SELECT SLEEP(2)")
         end
-      end.to raise_error(ActiveRecord::StatementInvalid)
+      end.to raise_error(ActiveRecord::AdapterTimeout)
     end
 
-    it "resets the connection timeout on checkin" do
-      conn = ActiveRecord::Base.connection
-      ActiveRecord::DynamicTimeout.with(timeout: 5) do
-        conn.execute("SELECT SLEEP(0)")
-        ActiveRecord::Base.connection_pool.release_connection
+    it "ensures the connection timeout is is set after reconnect" do
+      ActiveRecord::DynamicTimeout.with(timeout: 1) do
+        ActiveRecord::Base.connection.execute("SELECT SLEEP(0)")
+        ActiveRecord::Base.connection.reconnect!
+        expect do
+          ActiveRecord::Base.connection.execute("SELECT SLEEP(2)")
+        end.to raise_error(ActiveRecord::AdapterTimeout)
       end
+    end
+
+    it "checks connection back in with the correct timeout" do
+      connection = ActiveRecord::Base.connection
+      ActiveRecord::DynamicTimeout.with(timeout: 1) do
+        connection.execute("SELECT SLEEP(0)")
+        connection.close
+      end
+      expect(connection.raw_connection.instance_variable_get(:@read_timeout)).to eq(60)
+      expect(connection.raw_connection.instance_variable_get(:@write_timeout)).to eq(60)
     end
   end
 end
