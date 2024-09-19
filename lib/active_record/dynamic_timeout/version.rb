@@ -1,4 +1,4 @@
-module Activerecord
+module ActiveRecord
   module DynamicTimeout
     VERSION = '0.0.1'
   end

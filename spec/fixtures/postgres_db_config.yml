@@ -1,0 +1,8 @@
+test:
+  encoding: utf8
+  username: <%= ENV['DATABASE_MYSQL_USERNAME'] || '' %>
+  password: <%= ENV['DATABASE_MYSQL_PASSWORD'] || '' %>
+  adapter: postgresql
+  pool: 5
+  database: activerecord_dynamic_timeout_test
+  host: <%= ENV['DATABASE_MYSQL_HOST'] || 'localhost' %>

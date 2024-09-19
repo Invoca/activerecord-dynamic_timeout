@@ -1,5 +1,6 @@
 # Also see https://github.com/github/gitignore/blob/master/Ruby.gitignore
 
+gemfiles/*.gemfile.lock
 Gemfile.lock
 *.gem
 .bundle
