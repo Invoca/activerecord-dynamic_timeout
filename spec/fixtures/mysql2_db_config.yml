@@ -1,0 +1,10 @@
+test:
+  encoding: utf8
+  username: <%= ENV['DATABASE_MYSQL_USERNAME'] || 'root' %>
+  password: <%= ENV['DATABASE_MYSQL_PASSWORD'] || '' %>
+  adapter: mysql2
+  pool: 5
+  database: activerecord_dynamic_timeout_test
+  host: <%= ENV['DATABASE_MYSQL_HOST'] || 'localhost' %>
+  read_timeout: 60
+  write_timeout: 60
