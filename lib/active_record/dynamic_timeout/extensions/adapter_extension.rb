@@ -40,7 +40,7 @@ module ActiveRecord::DynamicTimeout
   module TimeoutAdapterExtension
     def with_raw_connection(*args, **kwargs, &block)
       super do |raw_connection|
-        set_dynamic_timeout(raw_connection, ActiveRecord::DynamicTimeout.current_timeout)
+        set_dynamic_timeout(raw_connection, ActiveRecord::Base.current_timeout)
         yield raw_connection
       ensure
         if timeout_set_client_side?
@@ -69,7 +69,7 @@ module ActiveRecord::DynamicTimeout
   module TimeoutAdapterExtension_Rails_7_0
     def log(*args, **kwargs, &block)
       super do
-        set_dynamic_timeout(@connection, ActiveRecord::DynamicTimeout.current_timeout)
+        set_dynamic_timeout(@connection, ActiveRecord::Base.current_timeout)
         yield
       ensure
         if timeout_set_client_side?
