@@ -4,5 +4,7 @@ test:
   password: <%= ENV['DATABASE_MYSQL_PASSWORD'] || '' %>
   adapter: postgresql
   pool: 5
-  database: activerecord_dynamic_timeout_test
+  database: postgres_dynamic_timeout_test
   host: <%= ENV['DATABASE_MYSQL_HOST'] || 'localhost' %>
+  variables:
+    statement_timeout: 10000

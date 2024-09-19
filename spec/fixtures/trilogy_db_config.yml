@@ -4,7 +4,7 @@ test:
   password: <%= ENV['DATABASE_MYSQL_PASSWORD'] || '' %>
   adapter: trilogy
   pool: 5
-  database: activerecord_dynamic_timeout_test
+  database: trilogy_dynamic_timeout_test
   socket: /tmp/mysql.sock
   read_timeout: 60
   write_timeout: 60

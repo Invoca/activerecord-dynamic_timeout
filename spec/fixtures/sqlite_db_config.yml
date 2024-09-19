@@ -5,5 +5,5 @@ test:
   adapter: sqlite3
   pool: 5
   timeout: 5000
-  database: activerecord_dynamic_timeout_test
+  database: spec/fixtures/sqlite/activerecord_dynamic_timeout_test
   host: <%= ENV['DATABASE_MYSQL_HOST'] || 'localhost' %>
