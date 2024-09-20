@@ -2,40 +2,48 @@
 name: ActiveRecord DynamicTimeout
 on: [push]
 jobs:
-#  unit-test:
-#    name: Base Unit Tests
-#    runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        ruby:
-#        - 3.1
-#        - 3.2
-#        - 3.3
-#        gemfile:
-#        - "gemfiles/activerecord_6_1.gemfile"
-#        - "gemfiles/activerecord_7_0.gemfile"
-#        - "gemfiles/activerecord_7_1.gemfile"
-#        - "gemfiles/activerecord_7_2.gemfile"
-#    env:
-#      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: ${{ matrix.ruby }}
-#          bundler: 2.5.5
-#          bundler-cache: true
-#      - run: bundle exec rspec --tag ~@mysql2 --tag ~@trilogy --tag ~@postgresql --tag ~@sqlite
-  mysql-tests:
-    name: MySQL Tests
+  unit-test:
+    name: Base Unit Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        mysql:
-        - 5.7
-        - 8.0
+        ruby:
+        - 3.1
+        - 3.2
+        - 3.3
+        gemfile:
+        - "gemfiles/activerecord_6_1.gemfile"
+        - "gemfiles/activerecord_7_0.gemfile"
+        - "gemfiles/activerecord_7_1.gemfile"
+        - "gemfiles/activerecord_7_2.gemfile"
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler: 2.5.5
+          bundler-cache: true
+      - run: bundle exec rspec --tag ~@mysql2 --tag ~@trilogy --tag ~@postgresql --tag ~@sqlite
+  mysql-tests:
+    name: MySQL Tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_DATABASE: mysql2_dynamic_timeout_test
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: rootpassword
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    strategy:
+      fail-fast: false
+      matrix:
         ruby:
           - 3.1
           - 3.2
@@ -57,16 +65,24 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: 2.5.5
           bundler-cache: true
-      - run: bundle exec rspec --tag mysql
+      - run: bundle exec rspec --tag mysql2
   trilogy-tests:
     name: Trilogy Tests
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_DATABASE: trilogy_dynamic_timeout_test
+          DATABASE_MYSQL_USERNAME: user
+          DATABASE_MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: rootpassword
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
       fail-fast: false
       matrix:
-        mysql:
-        - 5.7
-        - 8.0
         ruby:
         - 3.1
         - 3.2
@@ -77,8 +93,6 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_MYSQL_HOST: 127.0.0.1
-      DATABASE_MYSQL_USERNAME: user
-      DATABASE_MYSQL_PASSWORD: password
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
@@ -87,77 +101,77 @@ jobs:
           bundler: 2.5.5
           bundler-cache: true
       - run: bundle exec rspec --tag trilogy
-#  postgresql-tests:
-#    name: PostgreSQL Tests
-#    runs-on: ubuntu-latest
-#    services:
-#      postgres:
-#        image: postgres
-#        env:
-#          POSTGRES_PASSWORD: password
-#        options: >-
-#          --health-cmd pg_isready
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-#
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        ruby:
-#          - 3.1
-#          - 3.2
-#          - 3.3
-#        gemfile:
-#          - "gemfiles/activerecord_6_1.gemfile"
-#          - "gemfiles/activerecord_7_0.gemfile"
-#          - "gemfiles/activerecord_7_1.gemfile"
-#          - "gemfiles/activerecord_7_2.gemfile"
-#    env:
-#      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
-#      DATABASE_PASSWORD: password
-#      POSTGRES_PORT: 5432
-#    steps:
-#    - uses: actions/checkout@v2
-#    - uses: ruby/setup-ruby@v1
-#      with:
-#        ruby-version: ${{ matrix.ruby }}
-#        bundler: 2.5.5
-#        bundler-cache: true
-#    - run: bundle exec rspec --tag postgresql
-#  sqlite-tests:
-#    name: Sqlite Tests
-#    runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        ruby:
-#          - 3.1
-#          - 3.2
-#          - 3.3
-#        gemfile:
-#          - "gemfiles/activerecord_6_1.gemfile"
-#          - "gemfiles/activerecord_7_0.gemfile"
-#          - "gemfiles/activerecord_7_1.gemfile"
-#          - "gemfiles/activerecord_7_2.gemfile"
-#    env:
-#      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: ${{ matrix.ruby }}
-#          bundler: 2.5.5
-#          bundler-cache: true
-#      - run: bundle exec rspec --tag sqlite
+  postgresql-tests:
+    name: PostgreSQL Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - 3.1
+          - 3.2
+          - 3.3
+        gemfile:
+          - "gemfiles/activerecord_6_1.gemfile"
+          - "gemfiles/activerecord_7_0.gemfile"
+          - "gemfiles/activerecord_7_1.gemfile"
+          - "gemfiles/activerecord_7_2.gemfile"
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      DATABASE_PASSWORD: password
+      POSTGRES_PORT: 5432
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler: 2.5.5
+        bundler-cache: true
+    - run: bundle exec rspec --tag postgresql
+  sqlite-tests:
+    name: Sqlite Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - 3.1
+          - 3.2
+          - 3.3
+        gemfile:
+          - "gemfiles/activerecord_6_1.gemfile"
+          - "gemfiles/activerecord_7_0.gemfile"
+          - "gemfiles/activerecord_7_1.gemfile"
+          - "gemfiles/activerecord_7_2.gemfile"
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler: 2.5.5
+          bundler-cache: true
+      - run: bundle exec rspec --tag sqlite
   build_success:
     name: Build Success
     runs-on: ubuntu-latest
     needs:
-#    - unit-test
+    - unit-test
     - mysql-tests
     - trilogy-tests
-#    - postgresql-tests
-#    - sqlite-tests
+    - postgresql-tests
+    - sqlite-tests
     steps:
       - run: echo Done!
