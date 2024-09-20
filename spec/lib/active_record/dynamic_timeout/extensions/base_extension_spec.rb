@@ -3,6 +3,10 @@
 require "active_record/dynamic_timeout/extensions/base_extension"
 
 RSpec.describe ActiveRecord::DynamicTimeout::BaseExtension do
+  before do
+    base.instance_variable_set(:@timeout_isolation_scope, nil)
+  end
+
   let(:base) do
     Class.new(ActiveRecord::Base) do
       include ActiveRecord::DynamicTimeout::BaseExtension

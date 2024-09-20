@@ -7,13 +7,6 @@ module ActiveRecord::DynamicTimeout
   module BaseExtension
     extend ActiveSupport::Concern
 
-    included do
-      if ActiveRecord.gem_version < "7.0"
-        Thread.attr_accessor :ar_dynamic_timeout_execution_state unless Thread.method_defined?(:ar_dynamic_timeout_execution_state)
-        Fiber.attr_accessor :ar_dynamic_timeout_execution_state unless Fiber.method_defined?(:ar_dynamic_timeout_execution_state)
-      end
-    end
-
     module ClassMethods
       def with_timeout(timeout)
         (timeout.is_a?(Integer) || timeout.nil?) or raise ArgumentError, "timeout must be an Integer or NilClass, got: `#{timeout.inspect}`"
@@ -30,6 +23,7 @@ module ActiveRecord::DynamicTimeout
       # @param [Class] scope_class
       def timeout_isolation_scope=(scope_class)
         (scope_class == Thread || scope_class == Fiber) or raise ArgumentError, "scope must be `Thread` or `Fiber`, got: `#{scope_class.inspect}`"
+        raise ArgumentError, "timeout_isolation_scope can only be set once" if @timeout_isolation_scope
         if ActiveRecord.gem_version >= "7.0"
           ActiveRecord.deprecator.warn("ActiveRecord::Base.timeout_isolation_scope= does not do anything with Rails 7.0+ . Use ActiveSupport::IsolatedExecutionState.isolation_level= instead.")
         end
@@ -50,7 +44,12 @@ module ActiveRecord::DynamicTimeout
 
       def timeout_isolation_state
         if ActiveRecord.gem_version < "7.0"
-          timeout_isolation_scope.current.ar_dynamic_timeout_execution_state ||= {}
+          if timeout_isolation_scope == Thread
+            Thread.current.thread_variable_get(:ar_dynamic_timeout_execution_state) || Thread.current.thread_variable_set(:ar_dynamic_timeout_execution_state, {})
+          else
+            # Thread.current[] is Fiber local
+            Thread.current[:ar_dynamic_timeout_execution_state] ||= {}
+          end
         else
           ActiveSupport::IsolatedExecutionState
         end
