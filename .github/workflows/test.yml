@@ -74,11 +74,6 @@ jobs:
     services:
       mysql:
         image: mysql
-        env:
-          MYSQL_DATABASE: trilogy_dynamic_timeout_test
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: rootpassword
         ports:
           - 3306:3306
         options: >-
@@ -86,6 +81,10 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+          -e MYSQL_ROOT_PASSWORD=rootpassword
+          -e MYSQL_USER=user
+          -e MYSQL_PASSWORD=password
+          -e MYSQL_DATABASE=trilogy_dynamic_timeout_test
           --entrypoint sh mysql:8 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
     strategy:
       fail-fast: false
