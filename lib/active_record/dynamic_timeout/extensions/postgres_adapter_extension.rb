@@ -4,19 +4,12 @@ module ActiveRecord::DynamicTimeout
       if timeout.nil? || timeout == ":default" || timeout == :default
         raw_connection.query("SET SESSION statement_timeout TO DEFAULT")
       else
-        raw_connection.query("SET SESSION statement_timeout TO #{timeout}")
+        raw_connection.query("SET SESSION statement_timeout TO #{quote(timeout)}")
       end
     end
 
     def reset_connection_timeout(raw_connection)
       set_connection_timeout(raw_connection, default_statement_timeout)
-    end
-
-    def default_statement_timeout
-      unless defined?(@default_statement_timeout)
-        @default_statement_timeout = @config.fetch(:variables, {}).stringify_keys["statement_timeout"]
-      end
-      @default_statement_timeout
     end
 
     def timeout_set_client_side?
@@ -25,6 +18,15 @@ module ActiveRecord::DynamicTimeout
 
     def supports_dynamic_timeouts?
       true
+    end
+
+    private
+
+    def default_statement_timeout
+      unless defined?(@default_statement_timeout)
+        @default_statement_timeout = @config.fetch(:variables, {}).stringify_keys["statement_timeout"]
+      end
+      @default_statement_timeout
     end
   end
 end

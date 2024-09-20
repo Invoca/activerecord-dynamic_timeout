@@ -14,7 +14,7 @@ module ActiveRecord::DynamicTimeout
       set_callback :checkin, :before, :reset_dynamic_timeout_for_checkin, prepend: true
     end
 
-      def supports_dynamic_timeouts?
+    def supports_dynamic_timeouts?
       false
     end
 
