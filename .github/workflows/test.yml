@@ -20,7 +20,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -59,7 +59,7 @@ jobs:
       DATABASE_MYSQL_USERNAME: user
       DATABASE_MYSQL_PASSWORD: password
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -101,7 +101,7 @@ jobs:
       DATABASE_MYSQL_USERNAME: user
       DATABASE_MYSQL_PASSWORD: password
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -143,7 +143,7 @@ jobs:
       DATABASE_PASSWORD: password
       DATABASE_USERNAME: user
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
