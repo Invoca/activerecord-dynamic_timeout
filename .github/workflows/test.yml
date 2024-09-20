@@ -77,6 +77,8 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_MYSQL_HOST: 127.0.0.1
+      DATABASE_MYSQL_USERNAME: user
+      DATABASE_MYSQL_PASSWORD: password
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
