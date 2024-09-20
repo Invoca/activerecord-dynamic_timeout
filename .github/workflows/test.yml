@@ -1,6 +1,4 @@
 ---
-default_matrix: &default_matrix
-
 name: ActiveRecord DynamicTimeout
 on: [push]
 jobs:
@@ -97,7 +95,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: *default_matrix
+      matrix: *unit_test_matrix
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_PASSWORD: password
@@ -115,7 +113,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: *default_matrix
+      matrix: *unit_test_matrix
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
