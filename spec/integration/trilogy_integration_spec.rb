@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout/initializer"
 
-RSpec.describe "Trilogy Integration Tests", skip: (ActiveRecord.gem_version < "7.1" ? "Trilogy Not Supported" : nil) do
+RSpec.describe "Trilogy Integration Tests", trilogy: true, skip: (ActiveRecord.gem_version < "7.1" ? "Trilogy Not Supported" : nil) do
   before(:all) do
     configure_database(File.expand_path("../fixtures/trilogy_db_config.yml", __dir__))
     ActiveRecord::DynamicTimeout::Initializer.initialize!

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "active_record/connection_adapters/postgresql_adapter"
 require "active_record/dynamic_timeout/extensions/postgres_adapter_extension"
 
-RSpec.describe ActiveRecord::DynamicTimeout::PostgresAdapterExtension do
+RSpec.describe ActiveRecord::DynamicTimeout::PostgresAdapterExtension, postgresql: true do
+  require "active_record/connection_adapters/postgresql_adapter"
   let(:adapter_klass) do
     Class.new(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) do
       class << self

@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout/initializer"
 
-RSpec.describe "Mysql2 Integration Tests" do
+RSpec.describe "Mysql2 Integration Tests", mysql2: true do
   before do
     configure_database(File.expand_path("../fixtures/mysql2_db_config.yml", __dir__))
     ActiveRecord::DynamicTimeout::Initializer.initialize!

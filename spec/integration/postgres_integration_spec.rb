@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout/initializer"
 
-RSpec.describe "Postgres Integration Tests" do
+RSpec.describe "Postgres Integration Tests", postgresql: true do
   before(:all) do
     configure_database(File.expand_path("../fixtures/postgres_db_config.yml", __dir__))
     ActiveRecord::DynamicTimeout::Initializer.initialize!

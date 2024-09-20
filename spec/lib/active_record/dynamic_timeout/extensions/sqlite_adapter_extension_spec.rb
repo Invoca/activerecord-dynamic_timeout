@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "active_record/connection_adapters/sqlite3_adapter"
 require "active_record/dynamic_timeout/extensions/sqlite_adapter_extension"
 
-RSpec.describe ActiveRecord::DynamicTimeout::SqliteAdapterExtension do
+RSpec.describe ActiveRecord::DynamicTimeout::SqliteAdapterExtension, sqlite: true do
+  require "active_record/connection_adapters/sqlite3_adapter"
   let(:adapter_klass) do
     Class.new(ActiveRecord::ConnectionAdapters::SQLite3Adapter) do
       class << self

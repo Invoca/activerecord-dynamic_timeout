@@ -1,2 +1,0 @@
-
-RSpec.describe "Integration Tests"

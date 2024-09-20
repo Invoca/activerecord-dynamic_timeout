@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout/extensions/mysql2_adapter_extension"
 
-RSpec.describe ActiveRecord::DynamicTimeout::Mysql2AdapterExtension do
+RSpec.describe ActiveRecord::DynamicTimeout::Mysql2AdapterExtension, mysql2: true do
   let(:adapter_klass) do
     Class.new do
       class << self

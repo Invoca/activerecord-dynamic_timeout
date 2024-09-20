@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout/extensions/trilogy_adapter_extension"
 
-RSpec.describe ActiveRecord::DynamicTimeout::TrilogyAdapterExtension do
+RSpec.describe ActiveRecord::DynamicTimeout::TrilogyAdapterExtension, trilogy: true do
   let(:adapter_klass) do
     Class.new do
       class << self
