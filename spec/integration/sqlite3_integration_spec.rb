@@ -2,7 +2,7 @@
 
 require "active_record/dynamic_timeout/initializer"
 
-RSpec.describe "Sqlite3 Integration Tests" do
+RSpec.describe "Sqlite3 Integration Tests", sqlite: true do
   before(:all) do
     configure_database(File.expand_path("../fixtures/sqlite_db_config.yml", __dir__))
     ActiveRecord::DynamicTimeout::Initializer.initialize!
