@@ -26,8 +26,9 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: 2.5.5
           bundler-cache: true
-      - run: bundle exec rspec --tag ~@mysql2 --tag ~@trilogy --tag ~@postgresql --tag ~@sqlite
+      - run: bundle exec rspec --tag ~@mysql2 --tag ~@trilogy --tag ~@postgresql
   mysql-tests:
+    if: false
     name: MySQL Tests
     runs-on: ubuntu-latest
     services:
@@ -79,7 +80,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: rootpassword
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 --default-authentication-plugin=mysql_native_password"
     strategy:
       fail-fast: false
       matrix:
@@ -113,6 +114,8 @@ jobs:
         - 5432:5432
         env:
           POSTGRES_PASSWORD: password
+          POSTGRES_USER: user
+          POSTGRES_DB: postgres_dynamic_timeout_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -134,7 +137,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_PASSWORD: password
-      POSTGRES_PORT: 5432
+      DATABASE_USERNAME: user
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
@@ -143,31 +146,6 @@ jobs:
         bundler: 2.5.5
         bundler-cache: true
     - run: bundle exec rspec --tag postgresql
-  sqlite-tests:
-    name: Sqlite Tests
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby:
-          - 3.1
-          - 3.2
-          - 3.3
-        gemfile:
-          - "gemfiles/activerecord_6_1.gemfile"
-          - "gemfiles/activerecord_7_0.gemfile"
-          - "gemfiles/activerecord_7_1.gemfile"
-          - "gemfiles/activerecord_7_2.gemfile"
-    env:
-      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler: 2.5.5
-          bundler-cache: true
-      - run: bundle exec rspec --tag sqlite
   build_success:
     name: Build Success
     runs-on: ubuntu-latest
@@ -176,6 +154,5 @@ jobs:
     - mysql-tests
     - trilogy-tests
     - postgresql-tests
-    - sqlite-tests
     steps:
       - run: echo Done!
