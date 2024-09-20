@@ -74,8 +74,8 @@ jobs:
         image: mysql
         env:
           MYSQL_DATABASE: trilogy_dynamic_timeout_test
-          DATABASE_MYSQL_USERNAME: user
-          DATABASE_MYSQL_PASSWORD: password
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: rootpassword
         ports:
           - 3306:3306
@@ -93,6 +93,8 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_MYSQL_HOST: 127.0.0.1
+      DATABASE_MYSQL_USERNAME: user
+      DATABASE_MYSQL_PASSWORD: password
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
