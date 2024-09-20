@@ -13,7 +13,6 @@ jobs:
         - 3.2
         - 3.3
         gemfile:
-        - "Gemfile"
         - "gemfiles/activerecord_6_1.gemfile"
         - "gemfiles/activerecord_7_0.gemfile"
         - "gemfiles/activerecord_7_1.gemfile"
@@ -50,7 +49,6 @@ jobs:
           - 3.2
           - 3.3
         gemfile:
-          - "Gemfile"
           - "gemfiles/activerecord_6_1.gemfile"
           - "gemfiles/activerecord_7_0.gemfile"
           - "gemfiles/activerecord_7_1.gemfile"
@@ -75,10 +73,7 @@ jobs:
       mysql:
         image: mysql
         env:
-          MYSQL_DATABASE: mysql2_dynamic_timeout_test
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: trilogy_dynamic_timeout_test
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -90,14 +85,11 @@ jobs:
         - 3.2
         - 3.3
         gemfile:
-        - Gemfile
         - gemfiles/activerecord_7_1.gemfile
         - gemfiles/activerecord_7_2.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_MYSQL_HOST: 127.0.0.1
-      DATABASE_MYSQL_USERNAME: user
-      DATABASE_MYSQL_PASSWORD: password
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
@@ -128,7 +120,6 @@ jobs:
           - 3.2
           - 3.3
         gemfile:
-          - "Gemfile"
           - "gemfiles/activerecord_6_1.gemfile"
           - "gemfiles/activerecord_7_0.gemfile"
           - "gemfiles/activerecord_7_1.gemfile"
@@ -156,7 +147,6 @@ jobs:
           - 3.2
           - 3.3
         gemfile:
-          - "Gemfile"
           - "gemfiles/activerecord_6_1.gemfile"
           - "gemfiles/activerecord_7_0.gemfile"
           - "gemfiles/activerecord_7_1.gemfile"
