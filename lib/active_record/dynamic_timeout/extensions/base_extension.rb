@@ -7,10 +7,6 @@ module ActiveRecord::DynamicTimeout
   module BaseExtension
     extend ActiveSupport::Concern
 
-    included do
-      Thread.attr_accessor :ar_dynamic_timeout_execution_state
-    end
-
     module ClassMethods
       def with_timeout(timeout)
         (timeout.is_a?(Integer) || timeout.nil?) or raise ArgumentError, "timeout must be an Integer or NilClass, got: `#{timeout.inspect}`"
@@ -45,7 +41,8 @@ module ActiveRecord::DynamicTimeout
 
       def timeout_isolation_state
         if timeout_isolation_scope == Thread
-          Thread.current.ar_dynamic_timeout_execution_state ||= {}
+          Thread.current.thread_variable_get(:ar_dynamic_timeout_execution_state) ||
+            Thread.current.thread_variable_set(:ar_dynamic_timeout_execution_state, {})
         else
           # Thread.current[] is Fiber local
           Thread.current[:ar_dynamic_timeout_execution_state] ||= {}
@@ -53,7 +50,7 @@ module ActiveRecord::DynamicTimeout
       end
 
       def timeout_isolation_scope
-        @timeout_isolation_scope ||= Fiber
+        @timeout_isolation_scope
       end
     end
   end
