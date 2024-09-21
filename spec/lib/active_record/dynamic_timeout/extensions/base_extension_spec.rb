@@ -63,11 +63,7 @@ RSpec.describe ActiveRecord::DynamicTimeout::BaseExtension do
 
     context "when isolation level is set to Thread" do
       before do
-        if ActiveRecord.gem_version < "7.0"
-          base.timeout_isolation_scope = Thread
-        else
-          ActiveSupport::IsolatedExecutionState.isolation_level = :thread
-        end
+        base.timeout_isolation_scope = Thread
       end
 
       it "ensures the timeout is isolated to the current thread" do
@@ -105,11 +101,7 @@ RSpec.describe ActiveRecord::DynamicTimeout::BaseExtension do
 
     context "when isolation level is set to Fiber" do
       before do
-        if ActiveRecord.gem_version < "7.0"
-          base.timeout_isolation_scope = Fiber
-        else
-          ActiveSupport::IsolatedExecutionState.isolation_level = :fiber
-        end
+        base.timeout_isolation_scope = Fiber
       end
 
       it "ensures the timeout is isolated to the current fiber" do
