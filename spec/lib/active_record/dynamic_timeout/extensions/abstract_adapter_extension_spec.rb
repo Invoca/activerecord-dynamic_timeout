@@ -214,28 +214,25 @@ RSpec.describe ActiveRecord::DynamicTimeout::AbstractAdapterExtension do
       subject(:configure_connection) do
         adapter.configure_connection
       end
+      let(:support_dynamic_timeouts) { true }
 
       context "when dynamic timeouts are set" do
         before do
           adapter.active_record_dynamic_timeout = 10
         end
 
-        context "when timeout is set client side" do
+        context "when dynamic timeouts are not supported" do
+          let(:support_dynamic_timeouts) { false }
+
           it "does not set the connection timeout" do
             expect(adapter).not_to receive(:set_connection_timeout)
             configure_connection
           end
         end
 
-        context "when timeout is not set client side" do
-          before do
-            allow(adapter).to receive(:timeout_set_client_side?).and_return(false)
-          end
-
-          it "directly sets the connection timeout" do
-            expect(adapter).to receive(:set_connection_timeout).with("raw_connection", 10)
-            configure_connection
-          end
+        it "directly sets the connection timeout" do
+          expect(adapter).to receive(:set_connection_timeout).with("raw_connection", 10)
+          configure_connection
         end
       end
 
@@ -322,28 +319,24 @@ RSpec.describe ActiveRecord::DynamicTimeout::AbstractAdapterExtension do
       subject(:configure_connection) do
         adapter.configure_connection
       end
+      let(:support_dynamic_timeouts) { true }
 
       context "when dynamic timeouts are set" do
         before do
           adapter.active_record_dynamic_timeout = 10
         end
 
-        context "when timeout is set client side" do
+        context "when dynamic timeouts are not supported" do
+          let(:support_dynamic_timeouts) { false }
           it "does not set the connection timeout" do
             expect(adapter).not_to receive(:set_connection_timeout)
             configure_connection
           end
         end
 
-        context "when timeout is not set client side" do
-          before do
-            allow(adapter).to receive(:timeout_set_client_side?).and_return(false)
-          end
-
-          it "directly sets the connection timeout" do
-            expect(adapter).to receive(:set_connection_timeout).with("connection", 10)
-            configure_connection
-          end
+        it "directly sets the connection timeout" do
+          expect(adapter).to receive(:set_connection_timeout).with("connection", 10)
+          configure_connection
         end
       end
 

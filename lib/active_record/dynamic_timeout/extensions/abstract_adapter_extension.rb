@@ -52,7 +52,7 @@ module ActiveRecord::DynamicTimeout
     # This ensures new connections from reconnects have the correct timeout.
     def configure_connection
       super
-      if active_record_dynamic_timeout && !timeout_set_client_side?
+      if supports_dynamic_timeouts? && active_record_dynamic_timeout
         set_connection_timeout(@raw_connection, active_record_dynamic_timeout)
       end
     end
@@ -81,7 +81,7 @@ module ActiveRecord::DynamicTimeout
     # This ensures new connections from reconnects have the correct timeout.
     def configure_connection
       super
-      if active_record_dynamic_timeout && !timeout_set_client_side?
+      if supports_dynamic_timeouts? && active_record_dynamic_timeout
         set_connection_timeout(@connection, active_record_dynamic_timeout)
       end
     end
