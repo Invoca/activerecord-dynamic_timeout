@@ -2,7 +2,6 @@
 
 require "active_record"
 require "active_support"
-require_relative "../dynamic_timeout"
 require_relative "extensions/base_extension"
 require_relative "extensions/abstract_adapter_extension"
 require_relative "extensions/mysql2_adapter_extension"
@@ -36,7 +35,7 @@ module ActiveRecord::DynamicTimeout
                     when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter"
                       ActiveRecord::DynamicTimeout::PostgresAdapterExtension
                     end
-        adapter_class.prepend(extension) if extension
+        adapter_class.include(extension) if extension
       end
     end
   end

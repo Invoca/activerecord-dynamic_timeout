@@ -2,7 +2,6 @@
 
 require "active_support"
 require "active_support/concern"
-require_relative "../../dynamic_timeout"
 
 module ActiveRecord::DynamicTimeout
   module AbstractAdapterExtension

@@ -10,9 +10,10 @@ RSpec.describe "Trilogy Integration Tests", trilogy: true, skip: (ActiveRecord.g
 
   describe ".with" do
     it "sets the timeout on the connection" do
+      ActiveRecord::Base.connection.execute("CREATE TABLE IF NOT EXISTS test_table (id INT PRIMARY KEY)")
       expect do
         ActiveRecord::Base.with_timeout(1) do
-          ActiveRecord::Base.connection.  execute("SELECT SLEEP(2)")
+          ActiveRecord::Base.connection.execute("INSERT INTO test_table SELECT SLEEP(2)")
         end
       end.to raise_error(ActiveRecord::AdapterTimeout)
     end
