@@ -1,6 +1,7 @@
 module ActiveRecord::DynamicTimeout
   module TrilogyAdapterExtension
-    def set_connection_timeout(raw_connection, timeout)
+    def set_connection_timeout(raw_connection, timeout_seconds)
+      timeout = timeout_seconds.ceil.to_i # Round floats up to the nearest integer
       set_timeouts_on_connection(raw_connection, read_timeout: timeout, write_timeout: timeout)
     end
 

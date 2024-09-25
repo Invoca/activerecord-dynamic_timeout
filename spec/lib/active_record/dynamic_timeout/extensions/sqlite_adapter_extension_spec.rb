@@ -34,9 +34,9 @@ RSpec.describe ActiveRecord::DynamicTimeout::SqliteAdapterExtension, sqlite: tru
 
     let(:timeout) { 10 }
 
-    it "sets the timeout to the timeout" do
+    it "sets the timeout to the timeout in milliseconds" do
       set_connection_timeout
-      expect(connection.timeout).to eq(10)
+      expect(connection.timeout).to eq(10_000)
     end
 
     context "when timeout is nil" do
@@ -45,6 +45,22 @@ RSpec.describe ActiveRecord::DynamicTimeout::SqliteAdapterExtension, sqlite: tru
       it "sets the timeout to 0" do
         set_connection_timeout
         expect(connection.timeout).to eq(0)
+      end
+    end
+
+    context "when timeout is a float" do
+      let(:timeout) { 10.5 }
+      it "sets the timeout to the timeout in milliseconds as an integer" do
+        set_connection_timeout
+        expect(connection.timeout).to eq(10_500)
+      end
+    end
+
+    context "when timeout is a ActiveSupport::Duration" do
+      let(:timeout) { 10.seconds }
+      it "sets the timeout to the timeout in milliseconds as an integer" do
+        set_connection_timeout
+        expect(connection.timeout).to eq(10_000)
       end
     end
   end

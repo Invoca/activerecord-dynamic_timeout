@@ -12,14 +12,14 @@ RSpec.describe "Trilogy Integration Tests", trilogy: true, skip: (ActiveRecord.g
     it "sets the timeout on the connection" do
       ActiveRecord::Base.connection.execute("CREATE TABLE IF NOT EXISTS test_table (id INT PRIMARY KEY)")
       expect do
-        ActiveRecord::Base.with_timeout(1) do
+        ActiveRecord::Base.with_timeout(1.second) do
           ActiveRecord::Base.connection.execute("INSERT INTO test_table SELECT SLEEP(2)")
         end
       end.to raise_error(ActiveRecord::AdapterTimeout)
     end
 
     it "ensures the connection timeout is is set after reconnect" do
-      ActiveRecord::Base.with_timeout(1) do
+      ActiveRecord::Base.with_timeout(1.second) do
         ActiveRecord::Base.connection.execute("SELECT SLEEP(0)")
         ActiveRecord::Base.connection.reconnect!
         expect do
@@ -30,7 +30,7 @@ RSpec.describe "Trilogy Integration Tests", trilogy: true, skip: (ActiveRecord.g
 
     it "checks connection back in with the correct timeout" do
       connection = ActiveRecord::Base.connection
-      ActiveRecord::Base.with_timeout(1) do
+      ActiveRecord::Base.with_timeout(1.second) do
         connection.execute("SELECT SLEEP(0)")
         connection.close
       end

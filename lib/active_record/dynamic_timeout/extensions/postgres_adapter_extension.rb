@@ -1,15 +1,21 @@
 module ActiveRecord::DynamicTimeout
   module PostgresAdapterExtension
-    def set_connection_timeout(raw_connection, timeout)
-      if timeout.nil? || timeout == ":default" || timeout == :default
+    def set_connection_timeout(raw_connection, timeout_seconds)
+      if set_to_default_timeout?(timeout_seconds)
         raw_connection.query("SET SESSION statement_timeout TO DEFAULT")
       else
+        timeout = (timeout_seconds * 1000).to_i
         raw_connection.query("SET SESSION statement_timeout TO #{quote(timeout)}")
       end
     end
 
     def reset_connection_timeout(raw_connection)
-      set_connection_timeout(raw_connection, default_statement_timeout)
+      timeout = default_statement_timeout
+      if set_to_default_timeout?(timeout)
+        raw_connection.query("SET SESSION statement_timeout TO DEFAULT")
+      else
+        raw_connection.query("SET SESSION statement_timeout TO #{quote(timeout)}")
+      end
     end
 
     def timeout_set_client_side?
@@ -21,6 +27,10 @@ module ActiveRecord::DynamicTimeout
     end
 
     private
+
+    def set_to_default_timeout?(timeout)
+      timeout.nil? || timeout == ":default" || timeout == :default
+    end
 
     def default_statement_timeout
       unless defined?(@default_statement_timeout)

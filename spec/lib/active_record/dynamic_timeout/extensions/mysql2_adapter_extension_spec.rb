@@ -26,12 +26,31 @@ RSpec.describe ActiveRecord::DynamicTimeout::Mysql2AdapterExtension, mysql2: tru
   end
 
   describe "#set_connection_timeout" do
-    subject(:set_connection_timeout) { adapter.set_connection_timeout(connection, 10) }
+    subject(:set_connection_timeout) { adapter.set_connection_timeout(connection, timeout) }
+    let(:timeout) { 10 }
 
     it "sets the read and write timeout instance variables" do
       set_connection_timeout
       expect(connection.read_timeout).to eq(10)
       expect(connection.write_timeout).to eq(10)
+    end
+
+    context "when timeout is a float" do
+      let(:timeout) { 10.1 }
+      it "sets the read and write timeout instance variables as the next highest integer" do
+        set_connection_timeout
+        expect(connection.read_timeout).to eq(11)
+        expect(connection.write_timeout).to eq(11)
+      end
+    end
+
+    context "when timeout is a ActiveSupport::Duration" do
+      let(:timeout) { 10.seconds }
+      it "sets the read and write timeout instance variables as integers" do
+        set_connection_timeout
+        expect(connection.read_timeout).to eq(10)
+        expect(connection.write_timeout).to eq(10)
+      end
     end
   end
 

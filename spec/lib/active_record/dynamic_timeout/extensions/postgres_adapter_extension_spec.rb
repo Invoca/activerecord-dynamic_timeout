@@ -34,9 +34,9 @@ RSpec.describe ActiveRecord::DynamicTimeout::PostgresAdapterExtension, postgresq
 
     let(:timeout) { 10 }
 
-    it "sets the session statement timeout to the timeout" do
+    it "sets the session statement timeout to the timeout in milliseconds" do
       set_connection_timeout
-      expect(connection.last_query).to eq("SET SESSION statement_timeout TO 10")
+      expect(connection.last_query).to eq("SET SESSION statement_timeout TO 10000")
     end
 
     context "when timeout is nil" do
@@ -63,6 +63,24 @@ RSpec.describe ActiveRecord::DynamicTimeout::PostgresAdapterExtension, postgresq
       it "sets the session statement timeout to the default" do
         set_connection_timeout
         expect(connection.last_query).to eq("SET SESSION statement_timeout TO DEFAULT")
+      end
+    end
+
+    context "when timeout is a float" do
+      let(:timeout) { 10.5 }
+
+      it "sets the session statement timeout to the timeout in milliseconds as an integer" do
+        set_connection_timeout
+        expect(connection.last_query).to eq("SET SESSION statement_timeout TO 10500")
+      end
+    end
+
+    context "when timeout is a ActiveSupport::Duration" do
+      let(:timeout) { 10.seconds }
+
+      it "sets the session statement timeout to the timeout in milliseconds as an integer" do
+        set_connection_timeout
+        expect(connection.last_query).to eq("SET SESSION statement_timeout TO 10000")
       end
     end
   end

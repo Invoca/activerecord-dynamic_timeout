@@ -16,15 +16,24 @@ ActiveRecord::DynamicTimeout::Initializer.initialize!
 ```
 
 ## Usage
-    
+To use this gem, you can set a timeout for a block of code that runs queries using ActiveRecord.
+Within the block, if a query takes longer than the timeout value (in seconds), an `ActiveRecord::QueryAborted` error (or a subclass of it) will be raised.
+
+
+#### Example
 ```ruby
 class MyModel < ActiveRecord::Base
   # Model code...
 end
 
-MyModel.with_timeout(5) do
-  MyModel.find(1)
+# Set a timeout for all queries run within the block
+MyModel.with_timeout(5.seconds) do
+  MyModel.all # A long running query that takes over 5 seconds
 end
+# => Raises ActiveRecord::QueryAborted error (or a subclass of it) after 5 seconds.
+
+MyModel.all # A long query that takes over 5 seconds
+# => ActiveRecord::Relation<MyModel>...
 ```
 
 ## Supported Adapters
@@ -51,12 +60,6 @@ Timeouts are set via setting the session variable via the following query `SET S
 
 See more information at https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-STATEMENT-TIMEOUT
 
-**Note** - statement_timeout is in milliseconds. Pass the timeout as an integer in milliseconds
-```ruby
-AcitveRecord::Base.with_timeout(5000) do
-  # Run queries that each need to return within 5 seconds
-end
-```
 **Note** - Because this executes a query to set the timeout, we will lazily set and reset the timeout on the connection. This is done to reduce
 the number of queries run.
 

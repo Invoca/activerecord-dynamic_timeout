@@ -11,14 +11,14 @@ RSpec.describe "Mysql2 Integration Tests", mysql2: true do
   describe ".with" do
     it "sets the timeout on the connection" do
       expect do
-        ActiveRecord::Base.with_timeout(1) do
+        ActiveRecord::Base.with_timeout(1.second) do
           ActiveRecord::Base.connection.execute("SELECT SLEEP(2)")
         end
       end.to raise_error(ActiveRecord::AdapterTimeout)
     end
 
     it "ensures the connection timeout is is set after reconnect" do
-      ActiveRecord::Base.with_timeout(1) do
+      ActiveRecord::Base.with_timeout(1.second) do
         ActiveRecord::Base.connection.execute("SELECT SLEEP(0)")
         ActiveRecord::Base.connection.reconnect!
         expect do
@@ -29,7 +29,7 @@ RSpec.describe "Mysql2 Integration Tests", mysql2: true do
 
     it "checks connection back in with the correct timeout" do
       connection = ActiveRecord::Base.connection
-      ActiveRecord::Base.with_timeout(1) do
+      ActiveRecord::Base.with_timeout(1.second) do
         connection.execute("SELECT SLEEP(0)")
         connection.close
       end
