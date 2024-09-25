@@ -12,18 +12,15 @@ RSpec.describe ActiveRecord::DynamicTimeout::SqliteAdapterExtension, sqlite: tru
         end
       end
 
-      def initialize(config)
-        @config = config
-      end
-    end.prepend(described_class)
+      def initialize; end
+    end.include(described_class)
   end
-  let(:adapter) { adapter_klass.new(config) }
-  let(:config) { {} }
+  let(:adapter) { adapter_klass.new }
   let(:connection) { connection_klass.new }
   let(:connection_klass) do
     Class.new do
       attr_reader :timeout
-      def busy_timeout(timeout)
+      def statement_timeout=(timeout)
         @timeout = timeout
       end
     end
@@ -68,37 +65,30 @@ RSpec.describe ActiveRecord::DynamicTimeout::SqliteAdapterExtension, sqlite: tru
   describe "#reset_connection_timeout" do
     subject(:reset_connection_timeout) { adapter.reset_connection_timeout(connection) }
 
-    context "when timeout is set in the config" do
-      let(:config) { { timeout: 20 } }
-
-      it "resets the timeout to the value in the config" do
-        reset_connection_timeout
-        expect(connection.timeout).to eq(20)
-      end
-    end
-
-    context "when timeout in the config is a numeric string" do
-      let(:config) { { timeout: "20" } }
-
-      it "resets the timeout to the value in the config" do
-        reset_connection_timeout
-        expect(connection.timeout).to eq(20)
-      end
-    end
-
-    context "when timeout is not set in the config" do
-      it "sets the timeout to 0" do
-        reset_connection_timeout
-        expect(connection.timeout).to eq(0)
-      end
+    it "sets the timeout to 0" do
+      reset_connection_timeout
+      expect(connection.timeout).to eq(0)
     end
   end
 
   describe "#timeout_set_client_side?" do
-    it { expect(adapter.timeout_set_client_side?).to be_falsey }
+    it { expect(adapter.timeout_set_client_side?).to be_truthy }
   end
 
   describe "#supports_dynamic_timeouts?" do
-    it { expect(adapter.supports_dynamic_timeouts?).to be_truthy }
+    context "when SQLite3 version is greater than or equal to 2" do
+      before do
+        stub_const("SQLite3::VERSION", "2.0.0")
+      end
+      it { expect(adapter.supports_dynamic_timeouts?).to be_truthy }
+    end
+
+    context "when Sqlite3 version is less than 2" do
+      before do
+        stub_const("SQLite3::VERSION", "1.4.0")
+      end
+
+      it { expect(adapter.supports_dynamic_timeouts?).to be_falsey }
+    end
   end
 end

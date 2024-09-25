@@ -8,7 +8,7 @@ gem "debug"
 gem "mysql2"
 gem "pg"
 gem "rspec"
-gem "sqlite3", "~> 1.4"
+gem "sqlite3"
 gem "trilogy"
 gem "activerecord", "~> 7.1.0"
 

@@ -40,7 +40,7 @@ MyModel.all # A long query that takes over 5 seconds
 * mysql2
 * trilogy - ActiveRecord versions 7.1+
 * postgresql
-* sqlite3
+* sqlite3 (version >= 2.0) - Note - ActiveRecord < 7.1 do not support sqlite3 >= 2.0 
 
 See [OtherAdapters](#other-adapters) on how to add support for other adapters.
 
@@ -64,11 +64,14 @@ See more information at https://www.postgresql.org/docs/current/runtime-config-c
 the number of queries run.
 
 ### Sqlite3
-Timeouts are set via setting the busy_timeout PRAGMA attribute on the connection.
+Timeouts are set via the `Sqlite3::Database#statement_timeout=` method. See more information at https://www.rubydoc.info/gems/sqlite3/SQLite3/Database:statement_timeout=
 
-See more information at https://www.sqlite.org/pragma.html#pragma_busy_timeout
+Under the hood, this sets a progress_handler that will check every 1000 virtual machine instructions if the timeout has been exceeded. If it has,
+it will interrupt the query and raise out.
 
-Note that `busy_timeout` only will trigger if a table is locked for over the timeout. This does not work for SELECT statements.
+More information about Sqlite Progress Handlers: https://www.sqlite.org/draft/c3ref/progress_handler.html
+
+More information about Sqlite interrupt: https://www.sqlite.org/c3ref/interrupt.html
 
 **Note** - Because this executes a query to set the timeout, we will lazily set and reset the timeout on the connection. This is done to reduce
 the number of queries run.
