@@ -18,21 +18,21 @@ module ActiveRecord::DynamicTimeout
     end
 
     def set_dynamic_timeout(raw_connection, timeout_seconds)
-      return unless supports_dynamic_timeouts?
-      return if active_record_dynamic_timeout == timeout_seconds
-      if timeout_seconds.nil?
-        reset_dynamic_timeout(raw_connection)
-      else
-        set_connection_timeout(raw_connection, timeout_seconds)
-        self.active_record_dynamic_timeout = timeout_seconds
+      if supports_dynamic_timeouts? && timeout_seconds != active_record_dynamic_timeout
+        if timeout_seconds.nil?
+          reset_dynamic_timeout(raw_connection)
+        else
+          set_connection_timeout(raw_connection, timeout_seconds)
+          self.active_record_dynamic_timeout = timeout_seconds
+        end
       end
     end
 
     def reset_dynamic_timeout(raw_connection)
-      return unless supports_dynamic_timeouts?
-      return if active_record_dynamic_timeout.nil?
-      reset_connection_timeout(raw_connection)
-      self.active_record_dynamic_timeout = nil
+      if supports_dynamic_timeouts? && active_record_dynamic_timeout
+        reset_connection_timeout(raw_connection)
+        self.active_record_dynamic_timeout = nil
+      end
     end
   end
 
