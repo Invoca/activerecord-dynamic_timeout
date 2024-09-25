@@ -84,7 +84,7 @@ If you would like to add support for a different adapter, add the following code
 4. `#timeout_set_client_side?` - Used to decide if the timeout should be set lazily (and reset) or not
 
 ```ruby
-module MyAdapterDynamicTimeouts
+class MyAdapter < ActiveRecord::ConnectionAdapters::AbstractAdapter
   # @return [Boolean]
   def supports_dynamic_timeouts?
     true # Must return true.
@@ -107,11 +107,8 @@ module MyAdapterDynamicTimeouts
     # Return true if the timeout does not require a query to be executed in order to set the timeout
     # Return false if the timeout requires a query to be executed in order to set the timeout. When false, the timeout will be set lazily, only when necessary.
   end
-end
-
-class MyAdapter < ActiveRecord::ConnectionAdapters::AbstractAdapter
-  include MyAdapterDynamicTimeouts
-  # ...
+  
+  # Adapter code...
 end
 ```
 
