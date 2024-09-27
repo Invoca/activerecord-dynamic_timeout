@@ -19,7 +19,6 @@ ActiveRecord::DynamicTimeout::Initializer.initialize!
 To use this gem, you can set a timeout for a block of code that runs queries using ActiveRecord.
 Within the block, if a query takes longer than the timeout value (in seconds), an `ActiveRecord::QueryAborted` error (or a subclass of it) will be raised.
 
-
 #### Example
 ```ruby
 class MyModel < ActiveRecord::Base
@@ -40,7 +39,7 @@ MyModel.all # A long query that takes over 5 seconds
 * mysql2
 * trilogy - ActiveRecord versions 7.1+
 * postgresql
-* sqlite3 (version >= 2.0) - Note - ActiveRecord < 7.1 do not support sqlite3 >= 2.0 
+* sqlite3 (version >= 2.0) - Note - ActiveRecord < 7.1 does not support sqlite3 >= 2.0
 
 See [OtherAdapters](#other-adapters) on how to add support for other adapters.
 
@@ -52,8 +51,36 @@ A Pull Request has been open for over 6 years to add per-query read_timeouts: ht
 
 No queries are executed to set the timeouts.
 
+#### Warning on Raw Inserts and Updates
+If you are using raw inserts or updates, ensure you wrap them in a transaction. If you do not, the timeout will still occur but the query on the server side will still continue.
+If you are using normal ActiveRecord methods (e.g. `MyModel.create`, `MyModel.update`, etc.), you do not need to worry about this because these run the queries within a transaction already.
+
+```ruby
+### Bad!!!
+MyModel.count
+# => 0
+MyModel.with_timeout(1.seconds) do
+  MyModel.connection.execute("INSERT INTO my_models SELECT SLEEP(2)") # This will take longer than 1 second and cause a timeout.
+end
+# Wait ~1-2 seconds...
+MyModel.count
+# => 1 # The query still completed on the server side even though the client has timed out.
+
+### Good
+# Wrap the raw query in a transaction
+# This will cause the query to be rolled back if the timeout occurs.
+MyModel.with_timeout(1.seconds) do
+  MyModel.transaction do
+    MyModel.connection.execute("INSERT INTO my_models SELECT SLEEP(2)") # This will take longer than 1 second and cause a timeout.
+  end
+end
+```
+
 ### Trilogy
 Timeouts are set via the client read_timeout and write_timeout attributes on the clients. No queries are executed to set the timeouts.
+
+#### Warning on Raw Inserts and Updates (Trilogy)
+See [this section](#warning-on-raw-inserts-and-updates) for more information.
 
 ### Postgresql
 Timeouts are set via setting the session variable via the following query `SET SESSION statement_timeout TO <timeout>`.
