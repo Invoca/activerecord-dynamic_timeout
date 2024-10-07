@@ -5,6 +5,8 @@ require "active_support/core_ext"
 require "erb"
 require "yaml"
 
+class TestModel < ActiveRecord::Base; end
+
 module ConfigureDatabase
   def configure_database(db_config_path)
     # Load Database spec from config/database.yml
@@ -17,5 +19,10 @@ module ConfigureDatabase
       ActiveRecord::Base.configurations.configurations.first
     )
     ActiveRecord::Base.establish_connection(:test)
+  end
+
+  def create_test_model_table
+    ActiveRecord::Base.connection.drop_table(:test_models, if_exists: true)
+    ActiveRecord::Base.connection.create_table(:test_models)
   end
 end
