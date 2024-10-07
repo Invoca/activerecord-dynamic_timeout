@@ -19,16 +19,23 @@ RSpec.describe "Mysql2 Integration Tests", mysql2: true do
       end.to raise_error(ActiveRecord::AdapterTimeout)
     end
 
-    it "properly rolls back if timeout error is raised" do
-      expect(ActiveRecord::Base.connection.execute("SELECT count(*) from test_table").to_a).to eq([[0]])
-      expect do
-        ActiveRecord::Base.with_timeout(1.second) do
-          ActiveRecord::Base.transaction do
-            ActiveRecord::Base.connection.execute("INSERT INTO test_table SELECT SLEEP(2)")
+    context "timeout error is raised within a transaction" do
+      let(:expected_error) do
+        # Mysql2 gem will close the connection automatically when a timeout error is raised within a transaction.
+        # 6.1 and 7.0 however don't properly handle this which causes the ConnectionNotEstablished error
+        ActiveRecord.gem_version < "7.1" ? ActiveRecord::ConnectionNotEstablished : ActiveRecord::AdapterTimeout
+      end
+      it "properly rolls back" do
+        expect(ActiveRecord::Base.connection.execute("SELECT count(*) from test_table").to_a).to eq([[0]])
+        expect do
+          ActiveRecord::Base.with_timeout(1.second) do
+            ActiveRecord::Base.transaction do
+              ActiveRecord::Base.connection.execute("INSERT INTO test_table SELECT SLEEP(2)")
+            end
           end
-        end
-      end.to raise_error(ActiveRecord::AdapterTimeout)
-      expect(ActiveRecord::Base.connection.execute("SELECT count(*) from test_table").to_a).to eq([[0]])
+        end.to raise_error(expected_error)
+        expect(ActiveRecord::Base.connection.execute("SELECT count(*) from test_table").to_a).to eq([[0]])
+      end
     end
 
     it "ensures the connection timeout is is set after reconnect" do
