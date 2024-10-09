@@ -1,3 +1,7 @@
+# Also see https://github.com/github/gitignore/blob/master/Ruby.gitignore
+
+gemfiles/*.gemfile.lock
+Gemfile.lock
 *.gem
 *.rbc
 /.config
@@ -54,3 +58,7 @@ build-iPhoneSimulator/
 
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
+
+.idea
+
+spec/fixtures/sqlite

@@ -1,0 +1,14 @@
+test:
+  encoding: utf8
+  username: <%= ENV['DATABASE_MYSQL_USERNAME'] || 'root' %>
+  password: <%= ENV['DATABASE_MYSQL_PASSWORD'] || '' %>
+  adapter: trilogy
+  pool: 5
+  database: trilogy_dynamic_timeout_test
+  <% if ENV['DATABASE_MYSQL_HOST'] %>
+  host: <%= ENV['DATABASE_MYSQL_HOST'] %>
+  <% else %>
+  socket: /tmp/mysql.sock
+  <% end %>
+  read_timeout: 60
+  write_timeout: 60

@@ -1,0 +1,10 @@
+test:
+  encoding: utf8
+  username: <%= ENV['DATABASE_USERNAME'] || '' %>
+  password: <%= ENV['DATABASE_PASSWORD'] || '' %>
+  adapter: postgresql
+  pool: 5
+  database: postgres_dynamic_timeout_test
+  host: <%= ENV['DATABASE_HOST'] || 'localhost' %>
+  variables:
+    statement_timeout: 10000
