@@ -10,11 +10,13 @@ module ActiveRecord::DynamicTimeout
     module ClassMethods
       # @param [Numeric, NilClass] timeout_seconds The timeout in seconds, or nil to disable the timeout.
       def with_timeout(timeout_seconds)
-        (timeout_seconds.is_a?(Numeric) || timeout_seconds.nil?) or raise ArgumentError, "timeout_seconds must be Numeric or NilClass, got: `#{timeout_seconds.inspect}`"
-        timeout_stack << timeout_seconds
-        yield
-      ensure
-        timeout_stack.pop
+        (timeout_seconds.is_a?(Numeric) || timeout_seconds.nil?) or raise ArgumentError, "timeout_seconds must be Numeric or nil, got: `#{timeout_seconds.inspect}`"
+        begin
+          timeout_stack << timeout_seconds
+          yield
+        ensure
+          timeout_stack.pop
+        end
       end
 
       # @return [Numeric, NilClass] The current timeout in seconds, or nil if no timeout is set.

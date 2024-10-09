@@ -25,14 +25,14 @@ class MyModel < ActiveRecord::Base
   # Model code...
 end
 
+MyModel.all # A long query that takes over 5 seconds
+# => ActiveRecord::Relation<MyModel>...
+
 # Set a timeout for all queries run within the block
 MyModel.with_timeout(5.seconds) do
   MyModel.all # A long running query that takes over 5 seconds
 end
 # => Raises ActiveRecord::QueryAborted error (or a subclass of it) after 5 seconds.
-
-MyModel.all # A long query that takes over 5 seconds
-# => ActiveRecord::Relation<MyModel>...
 ```
 
 ## Supported Adapters

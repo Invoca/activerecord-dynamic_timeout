@@ -51,7 +51,7 @@ RSpec.describe ActiveRecord::DynamicTimeout::BaseExtension do
 
     context "when timeout is not an integer or nil" do
       it "raises an ArgumentError" do
-        expect { base.with_timeout("foo") { } }.to raise_error(ArgumentError, /timeout_seconds must be Numeric or NilClass/)
+        expect { base.with_timeout("foo") { } }.to raise_error(ArgumentError, /timeout_seconds must be Numeric or nil/)
       end
     end
 

@@ -13,7 +13,7 @@ RSpec.describe "Postgres Integration Tests", postgresql: true do
     Thread.new do
       ActiveRecord::Base.transaction do
         ActiveRecord::Base.connection.execute("LOCK TABLE test_models IN ACCESS EXCLUSIVE MODE")
-        sleep seconds
+        sleep(seconds)
       end
     end
     sleep(0.1) # Ensure thread has locked the table before returning
