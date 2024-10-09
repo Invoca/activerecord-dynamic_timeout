@@ -28,6 +28,8 @@ module ActiveRecord::DynamicTimeout
 
     private
 
+    # This method is copying how Rails configures session variables from the database config file.
+    # https://github.com/rails/rails/blob/main/activerecord/lib/active_record/connection_adapters/postgresql_adapter.rb#L970-L984
     def set_to_default_timeout?(timeout)
       timeout.nil? || timeout == ":default" || timeout == :default
     end
