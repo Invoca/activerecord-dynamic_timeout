@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: activerecord-dynamic_timeout
+  annotations:
+    github.com/project-slug: Invoca/activerecord-dynamic_timeout
+spec:
+  type: other
+  lifecycle: unknown
+  owner: octothorpe
