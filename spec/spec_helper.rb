@@ -2,6 +2,7 @@
 
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
+require 'logger'
 require "debug"
 
 require_relative "helpers/configure_database"
