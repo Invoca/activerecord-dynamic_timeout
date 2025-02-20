@@ -19,6 +19,8 @@ metadata:
   tags:
   - ruby
   - gem
+  - rails-dependent
+  - public
   annotations:
     buildkite.com/project-slug: invoca/activerecord-dynamic-timeout
     github.com/project-slug: invoca/activerecord-dynamic_timeout
